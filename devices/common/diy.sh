@@ -44,7 +44,8 @@ sed -i '/$(curdir)\/compile:/c\$(curdir)/compile: package/opkg/host/compile' pac
 sed -i "s/DEFAULT_PACKAGES:=/DEFAULT_PACKAGES:=luci-app-advancedplus luci-app-sysctl luci-app-firewall luci-app-package-manager luci-app-upnp luci-app-syscontrol \
 luci-app-wizard luci-base luci-compat luci-lib-ipkg luci-lib-fs \
 coremark wget-ssl curl autocore htop nano zram-swap kmod-lib-zstd kmod-tcp-bbr bash openssh-sftp-server block-mount resolveip ds-lite swconfig luci-app-fan luci-app-footstrap-files luci-app-wifihistory luci-app-tr3600-fan \
-luci-app-subconverter luci-app-openclash luci-app-zerotier unishare luci-app-unishare /" include/target.mk
+luci-app-subconverter luci-app-openclash luci-app-zerotier unishare luci-app-unishare \
+usb-modeswitch kmod-usb-net kmod-usb-net-cdc-usbnet kmod-usb-net-cdc-ether kmod-usb-net-rndis kmod-usb-net-cdc-ecm kmod-usb-acm kmod-usb-serial kmod-usb-serial-option kmod-usb-net-hso /" include/target.mk
 
 sed -i "s/^.*vermagic$/\techo '1' > \$(LINUX_DIR)\/.vermagic/" include/kernel-defaults.mk
 
@@ -89,3 +90,55 @@ sed -i "s/OpenWrt/Kwrt/g" package/base-files/files/bin/config_generate package/b
 sed -i -e "s/set \${s}.country='\${country || ''}'/set \${s}.country='\${country || \"CN\"}'/g" -e "s/set \${s}.disabled=.*/set \${s}.disabled='0'/" package/network/config/wifi-scripts/files/lib/wifi/mac80211.uc
 
 rm -rf package/feeds/packages/jool
+
+# 添加 USB 网络共享（USB Tethering）内核配置
+cat >> config/Config-kernel.in << 'EOF'
+
+config USB_NET_USBNET
+	bool
+	default y
+
+config USB_NET_CDCETHER
+	bool
+	default y
+
+config USB_NET_CDC_EEM
+	bool
+	default y
+
+config USB_NET_CDC_MBIM
+	bool
+	default y
+
+config USB_NET_RNDIS_HOST
+	bool
+	default y
+
+config USB_NET_CDC_ECM
+	bool
+	default y
+
+config USB_NET_AX88179_178A
+	bool
+	default y
+
+config USB_NET_QMI_WWAN
+	bool
+	default y
+
+config USB_NET_HUAWEI_CDC_NCM
+	bool
+	default y
+
+config USB_SERIAL_OPTION
+	bool
+	default y
+
+config USB_ACM
+	bool
+	default y
+
+config USB_NET_HSO
+	bool
+	default y
+EOF
